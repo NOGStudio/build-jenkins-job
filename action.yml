@@ -1,5 +1,5 @@
 # action.yml
-name: 'Run jenkins jobs'
+name: 'Run jenkins jobs with timeout'
 description: 'Build jenkins jobs using the jenkins api'
 inputs:
   jenkins-url:
