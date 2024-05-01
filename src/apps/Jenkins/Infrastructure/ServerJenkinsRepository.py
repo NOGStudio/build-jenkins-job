@@ -7,14 +7,15 @@ from src.apps.Jenkins.Domain.JobParams import JobParams
 
 
 class ServerJenkinsRepository(ServerRepository):
-    def __init__(self, url: str, token: str, username: str, ssl_verify=False):
+    def __init__(self, url: str, token: str, username: str, ssl_verify=False, timeout=180):
         self.__url = url
         self.__token = token
         self.__username = username
         self.__ssl_verify = ssl_verify
+        self.__timeout = timeout
 
         # Start Connection
-        self.__connection = jenkins.Jenkins(self.__url, username=self.__username, password=self.__token)
+        self.__connection = jenkins.Jenkins(self.__url, username=self.__username, password=self.__token, timeout=self.__timeout)
         self.__connection._session.verify = ssl_verify
         
     def build(self, name: str, params: JobParams) -> None:
