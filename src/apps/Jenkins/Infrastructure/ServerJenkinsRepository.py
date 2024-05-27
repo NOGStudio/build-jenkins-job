@@ -35,8 +35,18 @@ class ServerJenkinsRepository(ServerRepository):
         return info["executable"]["number"]
 
     def get_status(self, number) -> str:
-        build_info = self.__connection.get_build_info(name=self.__name, number=number)
-        return build_info["result"]
+        attempts = 3
+        for attempt in range(attempts):
+            try:
+                build_info = self.__connection.get_build_info(name=self.__name, number=number)
+                return build_info["result"]
+            except jenkins.JenkinsException as e:
+                print(f"Attempt {attempt + 1} of {attempts} failed: {e}")
+                if attempt < attempts - 1:
+                    time.sleep(5)  # Wait for 5 seconds before retrying
+                else:
+                    print(f"Job [{self.__name}] number [{number}] does not exist after {attempts} attempts. Continuing as non-fatal error.")
+                    return "UNKNOWN"
     
     def get_build_console_output(self, name, number):
         return self.__connection.get_build_console_output(name, number)
