@@ -1,5 +1,7 @@
 from src.apps.Jenkins.Domain.ServerRepository import ServerRepository
 from typing import Type
+import time
+import jenkins
 
 class BuildFinder:
     def __init__(self, repository: Type[ServerRepository], name: str) -> None:
@@ -8,19 +10,24 @@ class BuildFinder:
         self.consoleLines = 0
 
     def exec(self, number: int) -> str:
-        try:
-            consoleLines = self.repository.get_build_console_output(self.name, number).split("\n")
-        except Exception as e:
-            print(f"An error occurred while getting console output: {e}. Continuing execution as non-fatal.")
-            consoleLines = []
+        attempts = 3
+        for attempt in range(attempts):
+            try:
+                consoleLines = self.repository.get_build_console_output(self.name, number).split("\n")
+                consoleLinesCount = len(consoleLines)
+                for i in range(self.consoleLines, consoleLinesCount):
+                    print(consoleLines[i])
+                self.consoleLines = consoleLinesCount
 
-        consoleLinesCount = len(consoleLines)
-        for i in range(self.consoleLines, consoleLinesCount):
-            print(consoleLines[i])
+                status = self.repository.get_status(number)
+                return status
+            except jenkins.JenkinsException as e:
+                print(f"Attempt {attempt + 1} of {attempts} failed: {e}")
+                if attempt < attempts - 1:
+                    time.sleep(5)  # Wait for 5 seconds before retrying
+                else:
+                    print(f"Job [{self.name}] number [{number}] does not exist after {attempts} attempts. Continuing as non-fatal error.")
+                    return "UNKNOWN"
 
-        self.consoleLines = consoleLinesCount
-
-        return self.repository.get_status(number)
-    
     def number(self) -> int:
         return self.repository.get_number()
