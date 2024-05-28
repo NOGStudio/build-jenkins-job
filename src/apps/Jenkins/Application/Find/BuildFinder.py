@@ -40,7 +40,7 @@ class BuildFinder:
         ]
         
         error_patterns = [
-            re.compile(r'.*Error:.*'),  
+            re.compile(r'.* error .*'),  
             # Add more patterns as needed
         ]
         
