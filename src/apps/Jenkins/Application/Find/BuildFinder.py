@@ -23,8 +23,7 @@ class BuildFinder:
                 return status
             except jenkins.JenkinsException as e:
                 print(f"Attempt {attempt + 1} of {attempts} failed: {e}")
-                if attempt < attempts - 1:
-                else:
+                if attempt > attempts:
                     print(f"Job [{self.name}] number [{number}] does not exist after {attempts} attempts. Continuing as non-fatal error.")
                     return "UNKNOWN"
 
