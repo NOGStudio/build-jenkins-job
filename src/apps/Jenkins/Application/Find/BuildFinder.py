@@ -24,7 +24,6 @@ class BuildFinder:
             except jenkins.JenkinsException as e:
                 print(f"Attempt {attempt + 1} of {attempts} failed: {e}")
                 if attempt < attempts - 1:
-                    time.sleep(5)  # Wait for 5 seconds before retrying
                 else:
                     print(f"Job [{self.name}] number [{number}] does not exist after {attempts} attempts. Continuing as non-fatal error.")
                     return "UNKNOWN"
