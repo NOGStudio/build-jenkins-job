@@ -64,7 +64,7 @@ Doing so is insecure, but for self-hosted runners with self-signed certificates 
 ## Example usage
 ```
     - name: Build single job
-      uses: Mondtic/build-jenkins-job@master
+      uses: NOGStudio/build-jenkins-job@master
       with:
         jenkins-url: ${{ secrets.JENKINS_URL }}
         jenkins-token: ${{ secrets.JENKINS_TOKEN }}
