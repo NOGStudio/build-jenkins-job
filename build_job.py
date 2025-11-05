@@ -45,9 +45,8 @@ if JENKINS_WAIT_JOB == "no-wait" and build_number:
         fh.write("job_status=EXECUTED\n")
     exit(0)
 
-# Get build status
-while not (status := finder.exec(build_number)):
-    time.sleep(1)
+# Stream logs + get final status
+status = repository.stream_build_console_output(JENKINS_JOB_NAME, build_number)
 
 print(f"Job status is : {status}")
 with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
